@@ -15,6 +15,8 @@ services:
   backend:
     build: ./backend
     restart: 'always'
+    ports:
+      - 3001:3001
     depends_on:
       db:
         condition: service_healthy
@@ -29,7 +31,6 @@ services:
       test: ["CMD", "lsof", "-t", "-i:3001"]
       timeout: 10s
       retries: 5
-    
   db:
     image: mysql:8.0.21
     container_name: db
