@@ -1,44 +1,57 @@
 import * as sinon from 'sinon';
 import * as chai from 'chai';
+import * as jwt from 'jsonwebtoken';
+
 import chaiHttp = require('chai-http');
 
 import { app } from '../app';
-import Example from '../database/models/ExampleModel';
+import User from '../database/models/User';
+import UserMock from './mockUser'
+
+const { user, admin } = UserMock;
+
+const { validUser, invalidUser } = user;
+
+const { validAdmin, invalidAdmin } = admin;
 
 import { Response } from 'superagent';
+import { response } from 'express';
 
 chai.use(chaiHttp);
 
 const { expect } = chai;
 
 describe('Seu teste', () => {
-  /**
-   * Exemplo do uso de stubs com tipos
-   */
+  let responseChai: Response;
+  before(async () => {
+    sinon
+      .stub(User, "findOne")
+      .resolves(validAdmin as any);
+  });
 
-  // let chaiHttpResponse: Response;
+  after(()=>{
+    (User.findOne as sinon.SinonStub).restore();
+  })
 
-  // before(async () => {
-  //   sinon
-  //     .stub(Example, "findOne")
-  //     .resolves({
-  //       ...<Seu mock>
-  //     } as Example);
-  // });
+  it('Se status é o correto', async () => {
+    responseChai = await chai
+       .request(app).post('/login').send({ email: validAdmin.email,
+        password: validAdmin.password })
+        console.log('CONSOLE.LOG --------------------------------------------------------------', responseChai);
+       expect(responseChai).to.have.status(200)
+  });
 
-  // after(()=>{
-  //   (Example.findOne as sinon.SinonStub).restore();
-  // })
-
-  // it('...', async () => {
-  //   chaiHttpResponse = await chai
-  //      .request(app)
-  //      ...
-
-  //   expect(...)
-  // });
-
-  it('Seu sub-teste', () => {
-    expect(false).to.be.eq(true);
+  it('Se o usuario é o correto',async () => {
+    responseChai = await chai
+       .request(app).post('/login').send({ email: validAdmin.email,
+        password: validAdmin.password })
+        console.log(responseChai);
+       expect(responseChai).to.property('email').contain('admin@admin.com')
+  });
+  it('Sem passar o email',async () => {
+    responseChai = await chai
+       .request(app).post('/login').send({ password: validAdmin.password })
+        console.log(responseChai);
+       expect(responseChai).to.have.status(401)
   });
 });
