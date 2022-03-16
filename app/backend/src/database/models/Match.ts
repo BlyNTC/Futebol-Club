@@ -1,9 +1,10 @@
 import { Model, DataTypes } from 'sequelize';
 import db from '.';
+import Club from './Club';
 
 class Match extends Model {
-  static associate(models: any) {
-    this.belongsTo(models.Club, { foreignKey: 'id', as: 'clubs' });
+  static associate() {
+    this.hasMany(Club, { foreignKey: 'id' });
   }
 }
 

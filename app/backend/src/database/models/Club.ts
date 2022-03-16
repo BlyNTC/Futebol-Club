@@ -3,7 +3,7 @@ import db from '.';
 
 class Club extends Model {
   static associate(models: any) {
-    Club.hasMany(models.Match, { foreignKey: 'id', as: 'matchs' });
+    Club.hasMany(models.Match, { foreignKey: 'id' });
   }
 }
 

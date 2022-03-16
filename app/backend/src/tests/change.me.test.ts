@@ -21,7 +21,7 @@ chai.use(chaiHttp);
 
 const { expect } = chai;
 
-describe('Seu teste', () => {
+describe(' Rota login', () => {
   let responseChai: Response;
   before(async () => {
     sinon
@@ -37,7 +37,7 @@ describe('Seu teste', () => {
     responseChai = await chai
        .request(app).post('/login').send({ email: validAdmin.email,
         password: validAdmin.password })
-        console.log('CONSOLE.LOG --------------------------------------------------------------', responseChai);
+        console.log('CONSOLE.LOG ======================================>>>', responseChai);
        expect(responseChai).to.have.status(200)
   });
 
@@ -45,13 +45,58 @@ describe('Seu teste', () => {
     responseChai = await chai
        .request(app).post('/login').send({ email: validAdmin.email,
         password: validAdmin.password })
-        console.log(responseChai);
        expect(responseChai).to.property('email').contain('admin@admin.com')
   });
   it('Sem passar o email',async () => {
     responseChai = await chai
        .request(app).post('/login').send({ password: validAdmin.password })
-        console.log(responseChai);
        expect(responseChai).to.have.status(401)
+  });
+});
+describe('Rota /clubs', () => {
+  let responseChai: Response;
+  before(async () => {
+    sinon
+      .stub(User, "findAll")
+      .resolves([validAdmin, validUser] as any[]);
+  });
+
+  after(()=>{
+    (User.findAll as sinon.SinonStub).restore();
+  })
+
+  it('Se status é o correto', async () => {
+    responseChai = await chai.request(app).get('/clubs')
+        console.log('CONSOLE.LOG ======================================>>>', responseChai);
+       expect(responseChai).to.have.status(200)
+  });
+
+  it('Se o usuario é o correto',async () => {
+    responseChai = await chai.request(app).get('/clubs')
+    expect(responseChai).to.length(2)
+  });
+});
+
+describe('Rota /clubs', () => {
+  let responseChai: Response;
+  before(async () => {
+    sinon
+      .stub(User, "findByPk")
+      .resolves(validAdmin as any);
+  });
+
+  after(()=>{
+    (User.findByPk as sinon.SinonStub).restore();
+  })
+
+  it('Se status é o correto', async () => {
+    responseChai = await chai.request(app).get('/clubs/1')
+        console.log('CONSOLE.LOG ======================================>>>', responseChai);
+       expect(responseChai).to.have.status(200)
+  });
+
+  it('Se o usuario é o correto',async () => {
+    responseChai = await chai.request(app).get('/clubs/1')
+    expect(responseChai).to.have.property('email').to.be(validAdmin.email)
   });
 });
