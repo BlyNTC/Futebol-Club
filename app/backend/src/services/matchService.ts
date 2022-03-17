@@ -1,18 +1,18 @@
 import { Request } from 'express';
 import Match from '../database/models/Match';
 import { ResponseAndStatus } from '../interfaces';
-import { getAllMatchs, getAllMatchsFiltered, camelCaseConvert,
+import { getAllMatchs, getAllMatchsFiltered,
   validateToken, verifyDuplicateTeam, verifyClubExist } from '../utils';
 
 export async function getAll(query: any) {
   if (query.inProgress !== undefined) {
     const inProgress = query.inProgress === 'true';
     const allMatchs = await getAllMatchsFiltered(inProgress);
-    const response = allMatchs.response.map((match) => camelCaseConvert(match));
+    const { response } = allMatchs;
     return { response, status: allMatchs.status };
   }
   const allMatchs = await getAllMatchs();
-  const response = allMatchs.response.map((match) => camelCaseConvert(match));
+  const { response } = allMatchs;
   return { response, status: allMatchs.status };
 }
 
@@ -42,7 +42,7 @@ export async function createMatch(req: Request): Promise<ResponseAndStatus> {
     status: 200 };
   }
   if ((await verifyClubExist(req.body)).length !== 2) {
-    return { response: { message: 'Team not found' }, status: 401 };
+    return { response: { message: 'There is no team with such id!' }, status: 401 };
   }
   const createdMatch = await Match.create(req.body);
   console.log(createdMatch);

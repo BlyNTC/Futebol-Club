@@ -41,6 +41,7 @@ export async function createLoginResponse(userResponse: User): Promise<any> {
 export async function getAllMatchsFiltered(inProgress:boolean) {
   const allMatchs: Match[] = await Match.findAll({
     where: { in_progress: inProgress },
+    attributes: { exclude: ['home_team', 'away_team'] },
     include: [
       { model: Club,
         as: 'awayClub',
@@ -54,6 +55,7 @@ export async function getAllMatchsFiltered(inProgress:boolean) {
 
 export async function getAllMatchs() {
   const allMatchs: Match[] = await Match.findAll({
+    attributes: { exclude: ['home_team', 'away_team'] },
     include: [
       { model: Club,
         as: 'awayClub',
