@@ -9,7 +9,7 @@ const jwtSecret = 'super_senha';
 
 export async function verifyPassword(string: string | null, hash:string | null) {
   console.log('STRING ==========>>>', string, 'HASH =========>>', hash);
-  return !bcrypt.compare(string || 'ffh', hash || 'asd');
+  return !bcrypt.compare(string || 'asd', hash || 'asd');
 }
 
 export async function createToken(payload: any) {

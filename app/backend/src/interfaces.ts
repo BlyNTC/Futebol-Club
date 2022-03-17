@@ -16,3 +16,18 @@ export interface ResponseAndStatus {
   response: any,
   status: number,
 }
+
+export interface ClubName {
+  clubName: string
+}
+
+export interface ResponseMatchs {
+  id: number;
+  homeTeam: number;
+  homeTeamGoals: number;
+  awayTeam: number;
+  awayTeamGoals: number;
+  inProgress: number;
+  homeClub: ClubName;
+  awayClub: ClubName;
+}

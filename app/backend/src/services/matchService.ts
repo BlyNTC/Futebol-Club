@@ -1,29 +1,25 @@
-import Club from '../database/models/Club';
+import { Request } from 'express';
 import Match from '../database/models/Match';
-// import { ResponseAndStatus } from '../interfaces';
+import { ResponseAndStatus } from '../interfaces';
+import { getAllMatchs, getAllMatchsFiltered, camelCaseConvert } from '../utils';
 
 export async function getAll(query: any) {
-  if (query) {
+  console.log('QUERY ============>>>>>>>>>>', query.inProgress !== undefined);
+
+  if (query.inProgress !== undefined) {
     const inProgress = query.inProgress === 'true';
-    const allMatchs: Match[] = await Match.findAll({
-      where: { in_progress: inProgress },
-      include: [
-        { model: Club, as: 'awayClub', attributes: [['club_name', 'clubName']] },
-        { model: Club, as: 'homeClub', attributes: [['club_name', 'clubName']] },
-      ] });
-    return { response: allMatchs, status: 200 };
+    const allMatchs = await getAllMatchsFiltered(inProgress);
+    const response = allMatchs.response.map((match) => camelCaseConvert(match));
+    return { response, status: allMatchs.status };
   }
-  const allMatchs: Match[] = await Match.findAll({
-    include: [
-      { model: Club, as: 'awayClub', attributes: [['club_name', 'clubName']] },
-      { model: Club, as: 'homeClub', attributes: [['club_name', 'clubName']] },
-    ] });
-  return { response: allMatchs, status: 200 };
+  const allMatchs = await getAllMatchs();
+  const response = allMatchs.response.map((match) => camelCaseConvert(match));
+  return { response, status: allMatchs.status };
 }
 
 export async function getbyId(id: number | string) {
-  console.log('---------------------------'
-  + '--------------------------------------', typeof id !== 'number');
+  console.log('--------------------------'
+  + '------------------------------------', typeof id !== 'number');
   console.log(`ID ========================>>>>>>>  ${id}`);
 
   if (typeof id !== 'number') {
@@ -36,6 +32,6 @@ export async function getbyId(id: number | string) {
   return { response: MatchsFinded, status: 200 };
 }
 
-// export async function createMatch(reqBody): ResponseAndStatus {
-//   return { response:  , status: 200 }
-// }
+export async function createMatch(req: Request): Promise<ResponseAndStatus> {
+  return { response: req.body, status: 200 };
+}

@@ -14,7 +14,7 @@ export async function getById(req: Request, res: Response): Promise<void> {
   res.status(userFinded.status).json(userFinded.response);
 }
 
-// export async function createMatch(req: Request, res: Response): Promise<void> {
-//   const MatchCreated = matchService.createMatch(req);
-//   res.status(MatchCreated.status).json(MatchCreated.response);
-// }
+export async function createMatch(req: Request, res: Response): Promise<void> {
+  const MatchCreated = await matchService.createMatch(req);
+  res.status(MatchCreated.status).json(MatchCreated.response);
+}
