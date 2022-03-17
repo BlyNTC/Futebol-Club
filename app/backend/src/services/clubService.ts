@@ -14,7 +14,8 @@ export async function getbyId(id: number | string) {
   if (typeof id !== 'number') {
     return { response: { message: 'id must be a number' }, status: 403 };
   }
-  const clubsFinded: Club | null = await Club.findByPk(id);
+  const clubsFinded: Club | null = await Club.findOne({ where: { id },
+    attributes: ['id', ['club_name', 'clubName']] });
   if (!clubsFinded) {
     return { response: { message: 'not found' }, status: 404 };
   }
