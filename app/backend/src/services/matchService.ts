@@ -1,11 +1,10 @@
 import { Request } from 'express';
 import Match from '../database/models/Match';
 import { ResponseAndStatus } from '../interfaces';
-import { getAllMatchs, getAllMatchsFiltered, camelCaseConvert } from '../utils';
+import { getAllMatchs, getAllMatchsFiltered, camelCaseConvert,
+  validateToken, verifyDuplicateTeam, verifyClubExist } from '../utils';
 
 export async function getAll(query: any) {
-  console.log('QUERY ============>>>>>>>>>>', query.inProgress !== undefined);
-
   if (query.inProgress !== undefined) {
     const inProgress = query.inProgress === 'true';
     const allMatchs = await getAllMatchsFiltered(inProgress);
@@ -33,5 +32,19 @@ export async function getbyId(id: number | string) {
 }
 
 export async function createMatch(req: Request): Promise<ResponseAndStatus> {
-  return { response: req.body, status: 200 };
+  const tokenValidate = validateToken(req.headers.authorization);
+  if (!tokenValidate) {
+    return { response: { message: 'token not found' }, status: 401 };
+  }
+  if (verifyDuplicateTeam(req.body)) {
+    return { response:
+      { message: 'It is not possible to create a match with two equal teams' },
+    status: 200 };
+  }
+  if ((await verifyClubExist(req.body)).length !== 2) {
+    return { response: { message: 'Team not found' }, status: 401 };
+  }
+  const createdMatch = await Match.create(req.body);
+  console.log(createdMatch);
+  return { response: createdMatch, status: 200 };
 }

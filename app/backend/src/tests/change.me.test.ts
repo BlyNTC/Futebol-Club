@@ -37,14 +37,15 @@ describe(' Rota login', () => {
     responseChai = await chai
        .request(app).post('/login').send({ email: validAdmin.email,
         password: validAdmin.password })
-        console.log('CONSOLE.LOG ======================================>>>', responseChai);
        expect(responseChai).to.have.status(200)
   });
 
-  it('Se o usuario é o correto',async () => {
+  it.only('Se o usuario é o correto',async () => {
     responseChai = await chai
        .request(app).post('/login').send({ email: validAdmin.email,
         password: validAdmin.password })
+        console.log('RESPONSE ================>>>>',responseChai.body);
+        
        expect(responseChai).to.property('email').contain('admin@admin.com')
   });
   it('Sem passar o email',async () => {
@@ -67,7 +68,6 @@ describe('Rota /clubs', () => {
 
   it('Se status é o correto', async () => {
     responseChai = await chai.request(app).get('/clubs')
-        console.log('CONSOLE.LOG ======================================>>>', responseChai);
        expect(responseChai).to.have.status(200)
   });
 
@@ -91,7 +91,6 @@ describe('Rota /clubs', () => {
 
   it('Se status é o correto', async () => {
     responseChai = await chai.request(app).get('/clubs/1')
-        console.log('CONSOLE.LOG ======================================>>>', responseChai);
        expect(responseChai).to.have.status(200)
   });
 

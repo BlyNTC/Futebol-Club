@@ -1,5 +1,6 @@
 import * as jwt from 'jsonwebtoken';
 import * as bcrypt from 'bcryptjs';
+import { Op } from 'sequelize';
 import User from './database/models/User';
 import Match from './database/models/Match';
 import Club from './database/models/Club';
@@ -18,8 +19,11 @@ export async function createToken(payload: any) {
   return token;
 }
 
-export function validateToken(token:string): any {
+export function validateToken(token:string | undefined): any {
   try {
+    if (token === undefined) {
+      throw new Error('deu ruim');
+    }
     jwt.verify(token, jwtSecret);
     return jwt.decode(token, { complete: true });
   } catch (error) {
@@ -61,24 +65,25 @@ export async function getAllMatchs() {
   return { response: allMatchs, status: 200 };
 }
 
-/*
-"id": 1,
-  "home_team": 16,
-  "home_team_goals": 1,
-  "away_team": 8,
-  "away_team_goals": 1,
-  "in_progress": false,
-  "awayClub": {
-    "clubName": "Grêmio"
-  },
-  "homeClub": {
-    "clubName": "São Paulo"
-  }
-*/
-
 export function camelCaseConvert(match: any): ResponseMatchs {
   const { id, home_team: homeTeam, home_team_goals: homeTeamGoals,
     away_team: awayTeam, away_team_goals: awayTeamGoals,
     in_progress: inProgress, awayClub, homeClub } = match;
   return { id, homeTeam, homeTeamGoals, awayTeam, awayTeamGoals, inProgress, homeClub, awayClub };
+}
+
+export function verifyDuplicateTeam(reqBody: any): boolean {
+  return reqBody.homeTeam === reqBody.awayTeam;
+}
+export async function verifyClubExist(reqBody: any): Promise<Club[]> {
+  const club = await Club.findAll({
+    raw: true,
+    where:
+    {
+      id: { [Op.or]: [reqBody.awayTeam, reqBody.homeTeam] },
+    },
+  });
+  console.log('VERIFYCLUBEXIST ==================+>>>>', club);
+
+  return club;
 }

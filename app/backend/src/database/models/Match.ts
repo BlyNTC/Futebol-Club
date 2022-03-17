@@ -23,7 +23,8 @@ Match.init({
     autoIncrement: true,
     primaryKey: true,
   },
-  home_team: {
+  homeTeam: {
+    field: 'home_team',
     type: DataTypes.INTEGER,
     allowNull: false,
     onUpdate: 'CASCADE',
@@ -33,11 +34,13 @@ Match.init({
       key: 'id',
     },
   },
-  home_team_goals: {
+  homeTeamGoals: {
+    field: 'home_team_goals',
     type: DataTypes.INTEGER,
     allowNull: false,
   },
-  away_team: {
+  awayTeam: {
+    field: 'away_team',
     type: DataTypes.INTEGER,
     allowNull: false,
     onUpdate: 'CASCADE',
@@ -47,11 +50,13 @@ Match.init({
       key: 'id',
     },
   },
-  away_team_goals: {
+  awayTeamGoals: {
+    field: 'away_team_goals',
     type: DataTypes.INTEGER,
     allowNull: false,
   },
-  in_progress: {
+  inProgress: {
+    field: 'in_progress',
     type: DataTypes.BOOLEAN,
     allowNull: false,
   },
