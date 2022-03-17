@@ -7,7 +7,8 @@ import chaiHttp = require('chai-http');
 import { app } from '../app';
 import User from '../database/models/User';
 import UserMock from './mockUser'
-
+import mockMatchs from './mockMatchs';
+import mockClubs from './mockClubs';
 const { user, admin } = UserMock;
 
 const { validUser, invalidUser } = user;
@@ -16,6 +17,8 @@ const { validAdmin, invalidAdmin } = admin;
 
 import { Response } from 'superagent';
 import { response } from 'express';
+import Club from '../database/models/Club';
+import Match from '../database/models/Match';
 
 chai.use(chaiHttp);
 
@@ -33,69 +36,78 @@ describe(' Rota login', () => {
     (User.findOne as sinon.SinonStub).restore();
   })
 
-  it('Se status é o correto', async () => {
+  it('/login ===> O status é o correto', async () => {
     responseChai = await chai
        .request(app).post('/login').send({ email: validAdmin.email,
         password: validAdmin.password })
        expect(responseChai).to.have.status(200)
   });
 
-  it.only('Se o usuario é o correto',async () => {
+  it('/login ===> se o usuario retornado é o correto',async () => {
     responseChai = await chai
        .request(app).post('/login').send({ email: validAdmin.email,
-        password: validAdmin.password })
-        console.log('RESPONSE ================>>>>',responseChai.body);
-        
-       expect(responseChai).to.property('email').contain('admin@admin.com')
+        password: validAdmin.password })        
+       expect(responseChai.body.user).to.have.property('email').to.contains(validAdmin.email)
   });
-  it('Sem passar o email',async () => {
+  it('/login ===> Se retorna o status correto ao não passar o email ',async () => {
     responseChai = await chai
        .request(app).post('/login').send({ password: validAdmin.password })
        expect(responseChai).to.have.status(401)
   });
 });
-describe('Rota /clubs', () => {
+describe('Rota getAll /clubs', () => {
   let responseChai: Response;
   before(async () => {
     sinon
-      .stub(User, "findAll")
+      .stub(Club, "findAll")
       .resolves([validAdmin, validUser] as any[]);
   });
 
   after(()=>{
-    (User.findAll as sinon.SinonStub).restore();
+    (Club.findAll as sinon.SinonStub).restore();
   })
 
-  it('Se status é o correto', async () => {
+  it('/clubs ==> o status na resposta  é o correto', async () => {
     responseChai = await chai.request(app).get('/clubs')
        expect(responseChai).to.have.status(200)
   });
 
-  it('Se o usuario é o correto',async () => {
+  it('/clubs ==> vem o numero correto de usuarios',async () => {
     responseChai = await chai.request(app).get('/clubs')
-    expect(responseChai).to.length(2)
+    console.log('RESPONSE ================>>>>',responseChai.body);
+    expect(responseChai.body).to.length(2)
   });
 });
 
-describe('Rota /clubs', () => {
+describe('Rota get/matchs', () => {
   let responseChai: Response;
   before(async () => {
     sinon
-      .stub(User, "findByPk")
-      .resolves(validAdmin as any);
+      .stub(Match, "findAll")
+      .resolves(mockMatchs as any[]);
   });
 
   after(()=>{
-    (User.findByPk as sinon.SinonStub).restore();
+    (Match.findAll as sinon.SinonStub).restore();
   })
 
-  it('Se status é o correto', async () => {
-    responseChai = await chai.request(app).get('/clubs/1')
+  it('/matchs ==> o status na resposta  é o correto', async () => {
+    responseChai = await chai.request(app).get('/matchs')
        expect(responseChai).to.have.status(200)
   });
 
-  it('Se o usuario é o correto',async () => {
-    responseChai = await chai.request(app).get('/clubs/1')
-    expect(responseChai).to.have.property('email').to.be(validAdmin.email)
+  it('/matchs ==> se recebe o número correto de partidas',async () => {
+    responseChai = await chai.request(app).get('/matchs')
+    expect(responseChai.body).to.length(6)
+  });
+
+  it('/matchs ==> se passando a query inProgression=true ',async () => {
+    responseChai = await chai.request(app).get('/matchs?inProgression=true')
+    expect(responseChai.body).to.length(6)
+  });
+
+  it('/matchs ==> se passando a query inProgression=false ',async () => {
+    responseChai = await chai.request(app).get('/matchs?inProgression=false')
+    expect(responseChai.body).to.length(6)
   });
 });
