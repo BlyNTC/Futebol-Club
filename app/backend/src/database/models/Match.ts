@@ -3,9 +3,6 @@ import db from '.';
 import Club from './Club';
 
 class Match extends Model {
-  static associate() {
-    this.hasMany(Club, { foreignKey: 'id' });
-  }
 }
 
 Match.init({
@@ -44,7 +41,7 @@ Match.init({
     allowNull: false,
   },
   in_progress: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.BOOLEAN,
     allowNull: false,
   },
 }, {
@@ -53,5 +50,8 @@ Match.init({
   tableName: 'matchs',
   timestamps: false,
 });
+
+Match.belongsTo(Club, { foreignKey: 'home_team', targetKey: 'id', as: 'homeClub' });
+Match.belongsTo(Club, { foreignKey: 'away_team', targetKey: 'id', as: 'awayClub' });
 
 export default Match;
