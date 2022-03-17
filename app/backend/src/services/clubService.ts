@@ -1,7 +1,8 @@
 import Club from '../database/models/Club';
 
 export async function getAll() {
-  const allClubs: Club[] = await Club.findAll({ raw: true });
+  const allClubs: Club[] = await Club.findAll({ raw: true,
+    attributes: ['id', ['club_name', 'clubName']] });
   return { response: allClubs, status: 200 };
 }
 
