@@ -1,5 +1,4 @@
 import * as jwt from 'jsonwebtoken';
-
 import * as bcrypt from 'bcryptjs';
 import User from './database/models/User';
 
@@ -26,10 +25,7 @@ export function validateToken(token:string): any {
 }
 
 export async function createLoginResponse(userResponse: User): Promise<any> {
-  const id = await userResponse.getDataValue('id');
-  const email = await userResponse.getDataValue('email');
-  const username = await userResponse.getDataValue('username');
-  const role = await userResponse.getDataValue('role');
+  const { id, email, username, role } = userResponse;
   const user = { id, email, username, role };
   const token = await createToken(user);
   return { user, token };
