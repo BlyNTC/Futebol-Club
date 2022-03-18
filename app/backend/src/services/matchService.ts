@@ -20,7 +20,7 @@ export async function getbyId(id: number | string) {
   if (Number.isNaN(id)) {
     return { response: { message: 'id must be a number' }, status: 403 };
   }
-  const MatchsFinded: Match | null = await Match.findOne({ raw: true, where: { id } });
+  const MatchsFinded: Match | null = await Match.findOne({ where: { id } });
   if (!MatchsFinded) {
     return { response: { message: 'not found' }, status: 404 };
   }
@@ -47,6 +47,16 @@ export async function createMatch(req: Request): Promise<ResponseAndStatus> {
   return { response: createdMatch, status: 201 };
 }
 export async function finishMatch(id: number | string) {
-  const MatchsFinded = await Match.update({ inProgress: true }, { where: { id } });
+  const MatchsFinded = await Match.update({ inProgress: false }, { where: { id } });
   return { response: MatchsFinded, status: 200 };
+}
+
+export async function updateMatch(req: Request) {
+  const { body, params: { id } } = req;
+  if (!body.homeTeamGoals) {
+    const updatedMatch = await Match.update({ inProgress: false }, { where: { id: +id } });
+    return { response: updatedMatch, status: 200 };
+  }
+  const updatedMatch = await Match.update(body, { where: { id: +id } });
+  return { response: updatedMatch, status: 200 };
 }

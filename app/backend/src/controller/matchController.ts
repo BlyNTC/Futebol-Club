@@ -23,3 +23,8 @@ export async function finishMatch(req: Request, res: Response): Promise<void> {
   const userFinded: ResponseAndStatus = await matchService.finishMatch(+req.params.id);
   res.status(userFinded.status).json(userFinded.response);
 }
+
+export async function updateMatch(req: Request, res: Response): Promise<void> {
+  const userFinded: ResponseAndStatus = await matchService.updateMatch(req);
+  res.status(userFinded.status).json(userFinded.response);
+}
