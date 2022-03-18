@@ -8,15 +8,30 @@ import { ResponseMatchs } from './interfaces';
 
 const jwtSecret = 'super_senha';
 
+export function validateUser(email:string, password: string): boolean {
+  return !email || !password;
+}
+
 export async function verifyPassword(string: string | null, hash:string | null) {
-  console.log('STRING ==========>>>', string, 'HASH =========>>', hash);
   return !bcrypt.compare(string || 'asd', hash || 'asd');
 }
 
 export async function createToken(payload: any) {
   const token = jwt.sign(payload, jwtSecret, { algorithm: 'HS256', expiresIn: '7d' });
-  console.log('TOKEN ======================>>>', token);
   return token;
+}
+
+export function fixBody(reqBody: any) {
+  const newBody = reqBody;
+
+  const { awayTeam, homeTeam } = reqBody;
+  if (awayTeam === 0) {
+    newBody.awayTeam = 1;
+  }
+  if (homeTeam === 0) {
+    newBody.homeTeam = 1;
+  }
+  return newBody;
 }
 
 export function validateToken(token:string | undefined): any {
@@ -39,6 +54,8 @@ export async function createLoginResponse(userResponse: User): Promise<any> {
 }
 
 export async function getAllMatchsFiltered(inProgress:boolean) {
+  console.log('========= GETALLMATCHSFILTERED UTILS =========');
+
   const allMatchs: Match[] = await Match.findAll({
     where: { in_progress: inProgress },
     attributes: { exclude: ['home_team', 'away_team'] },
@@ -54,6 +71,8 @@ export async function getAllMatchsFiltered(inProgress:boolean) {
 }
 
 export async function getAllMatchs() {
+  console.log('========= GETALLMATCHS UTILS =========');
+
   const allMatchs: Match[] = await Match.findAll({
     attributes: { exclude: ['home_team', 'away_team'] },
     include: [
@@ -75,17 +94,16 @@ export function camelCaseConvert(match: any): ResponseMatchs {
 }
 
 export function verifyDuplicateTeam(reqBody: any): boolean {
-  return reqBody.homeTeam === reqBody.awayTeam;
+  const { homeTeam, awayTeam } = reqBody;
+  return homeTeam === awayTeam;
 }
-export async function verifyClubExist(reqBody: any): Promise<Club[]> {
-  const club = await Club.findAll({
+export async function verifyClubExist(reqBody: any): Promise<boolean> {
+  console.log('========= VERIFYCLUBEXIST UTILS =========');
+  const clubs = await Club.findAll({
     raw: true,
-    where:
-    {
-      id: { [Op.or]: [reqBody.awayTeam, reqBody.homeTeam] },
-    },
+    where: { id: { [Op.or]: [reqBody.awayTeam, reqBody.homeTeam] } },
   });
-  console.log('VERIFYCLUBEXIST ==================+>>>>', club);
+  console.log('FINDALL DOS TIMES', clubs.length === 2);
 
-  return club;
+  return clubs.length !== 2;
 }

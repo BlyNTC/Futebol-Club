@@ -7,11 +7,7 @@ export async function getAll() {
 }
 
 export async function getbyId(id: number | string) {
-  console.log('---------------------------'
-  + '--------------------------------------', typeof id !== 'number');
-  console.log(`ID ========================>>>>>>>  ${id}`);
-
-  if (typeof id !== 'number') {
+  if (Number.isNaN(id)) {
     return { response: { message: 'id must be a number' }, status: 403 };
   }
   const clubsFinded: Club | null = await Club.findOne({ where: { id },

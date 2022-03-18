@@ -1,9 +1,5 @@
 import User from '../database/models/User';
-import { validateToken, verifyPassword, createLoginResponse } from '../utils';
-
-function validateUser(email:string, password: string): boolean {
-  return !email || !password;
-}
+import { validateToken, verifyPassword, createLoginResponse, validateUser } from '../utils';
 
 export async function login(email:string, password: string) {
   if (validateUser(email, password)) {
@@ -19,13 +15,11 @@ export async function login(email:string, password: string) {
     };
   }
   const response = await createLoginResponse(userFinded);
-  console.log('RESPONSE ====================>>>>>>>', response);
   return { response, status: 200 };
 }
 
 export async function validate(token: any) {
   const tokenValidated = validateToken(token);
-  console.log('VALIDATED TOKEN =================>>>', tokenValidated);
 
   if (!tokenValidated) {
     return { response: { message: 'token invalid' }, status: 401 };
