@@ -9,6 +9,7 @@ import User from '../database/models/User';
 import UserMock from './mockUser'
 import mockMatchs from './mockMatchs';
 import mockClubs from './mockClubs';
+import clubsLeaderBoard from './clubsLeaderBoard';
 const { user, admin } = UserMock;
 
 const { validUser, invalidUser } = user;
@@ -19,6 +20,7 @@ import { Response } from 'superagent';
 import { response } from 'express';
 import Club from '../database/models/Club';
 import Match from '../database/models/Match';
+
 
 chai.use(chaiHttp);
 
@@ -210,4 +212,66 @@ describe('Rota POST /matchs', () => {
     expect(responseChai.body.id).to.deep.equal(mockMatchs[0].id)
   });
 
+});
+
+describe('Rota POST /matchs', () => {
+  let responseChai: Response;
+  before(async () => {
+    sinon
+      .stub(Match, "update")
+      .resolves([1] as any);
+  });
+ 
+  after(()=>{
+    (Match.update as sinon.SinonStub).restore();
+  })
+
+  it('PATCH /matchs/id ==> Se o status na resposta  é o correto', async () => {
+    responseChai = await chai.request(app).patch('/matchs/1').send({homeTeamGoals: 1, awayTeamGoals: 2})
+    
+    expect(responseChai).to.have.status(200)
+  });
+  
+  it('/matchs ==> Se vem o id da partida criada',async () => {
+    responseChai = await chai.request(app).patch('/matchs/1')
+    console.log('RESPONSE ==================>>>', responseChai.body);
+    
+    expect(responseChai).to.have.status(200)
+
+  });
+
+});
+
+describe('Rota GET /leaderboard', () => {
+  let responseChai: Response;
+  before(async () => {
+    sinon
+      .stub(Club, "findAll")
+      .resolves(clubsLeaderBoard as any[]);
+  });
+ 
+  after(()=>{
+    (Club.findAll as sinon.SinonStub).restore();
+  })
+
+  it('PATCH /matchs/id ==> Se o status na resposta  é o correto', async () => {
+    responseChai = await chai.request(app).get('/leaderboard').send({homeTeamGoals: 1, awayTeamGoals: 2})
+    console.log('RESPONSE ==================>>>', responseChai.body);
+    expect(responseChai).to.have.status(200)
+  });
+  
+  it('/matchs ==> Se vem o id da partida criada',async () => {
+    responseChai = await chai.request(app).get('/leaderboard/home')
+    console.log('RESPONSE ==================>>>', responseChai.body);
+    
+    expect(responseChai).to.have.status(200)
+
+  });
+  it('/matchs ==> Se vem o id da partida criada',async () => {
+    responseChai = await chai.request(app).get('/leaderboard/away')
+    console.log('RESPONSE ==================>>>', responseChai.body);
+    
+    expect(responseChai).to.have.status(200)
+
+  });
 });
