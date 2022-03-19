@@ -27,10 +27,6 @@ export async function getbyId(id: number | string) {
   return { response: MatchsFinded, status: 200 };
 }
 
-// const tokenValidate = validateToken(req.headers.authorization);
-// if (!tokenValidate) {
-//   return { response: { message: 'token not found' }, status: 401 };
-// }
 export async function createMatch(req: Request): Promise<ResponseAndStatus> {
   const newBody = fixBody(req.body);
   if (verifyDuplicateTeam(newBody)) {

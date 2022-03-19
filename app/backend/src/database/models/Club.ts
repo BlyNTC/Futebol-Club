@@ -2,6 +2,7 @@ import { Model, DataTypes } from 'sequelize';
 import db from '.';
 
 class Club extends Model {
+  public dataValues: any;
 }
 
 Club.init({
@@ -11,7 +12,8 @@ Club.init({
     autoIncrement: true,
     primaryKey: true,
   },
-  club_name: {
+  clubName: {
+    field: 'club_name',
     type: DataTypes.STRING,
     allowNull: false,
   },

@@ -13,7 +13,9 @@ class Match extends Model {
 
   public awayTeamGoals: number;
 
-  public inProgress: number;
+  public inProgress: boolean;
+
+  public dataValues: any;
 }
 
 Match.init({
@@ -70,5 +72,8 @@ Match.init({
 
 Match.belongsTo(Club, { foreignKey: 'home_team', targetKey: 'id', as: 'homeClub' });
 Match.belongsTo(Club, { foreignKey: 'away_team', targetKey: 'id', as: 'awayClub' });
+
+Club.hasMany(Match, { foreignKey: 'home_team', as: 'matchHome' });
+Club.hasMany(Match, { foreignKey: 'away_team', as: 'matchAway' });
 
 export default Match;

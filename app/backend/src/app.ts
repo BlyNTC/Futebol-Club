@@ -30,7 +30,7 @@ class App {
 
   // ...
   public start(PORT: string | number):void {
-    this.app.listen(PORT, () => console.log(`Rodando na porta ${PORT}`));
+    this.app.listen(PORT, () => console.log(`=========== Rodando na porta ${PORT} ===========`));
   }
 }
 
