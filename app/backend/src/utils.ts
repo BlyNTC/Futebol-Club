@@ -12,8 +12,8 @@ export function validateUser(email:string, password: string): boolean {
   return !email || !password;
 }
 
-export async function verifyPassword(string: string | null, hash:string | null) {
-  return !bcrypt.compare(string || 'asd', hash || 'asd');
+export async function verifyPassword(string: string, hash:string) {
+  return !bcrypt.compare(string, hash);
 }
 
 export async function createToken(payload: any) {
