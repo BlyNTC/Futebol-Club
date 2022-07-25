@@ -33,10 +33,9 @@ An api for a football tournament leaderboard website.
 
 ## :sparkles: Features ##
 
-:heavy_check_mark: Routes for get matchs;\
-:heavy_check_mark: Routes for manipulate and create matchs;\
-:heavy_check_mark: Routes for leaderboard;\
-:heavy_check_mark: Routes for home and away leaderboard;
+:heavy_check_mark: Routes for getting matches;\
+:heavy_check_mark: Routes for manipulating and creating matches;\
+:heavy_check_mark: Routes for home, away and complete leaderboards;
 
 ## :rocket: Technologies ##
 
@@ -60,7 +59,7 @@ Before starting :checkered_flag:, you need to have [Git](https://git-scm.com), [
 
 ```bash
 # Clone this project
-$ git clone https://github.com/BlyNTC/Delivery-app.git
+$ git clone https://github.com/BlyNTC/futebol-club.git
 
 # Access
 $ cd futebol-club
