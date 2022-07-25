@@ -59,7 +59,7 @@ Before starting :checkered_flag:, you need to have [Git](https://git-scm.com), [
 
 ```bash
 # Clone this project
-$ git clone https://github.com/BlyNTC/futebol-club.git
+$ git clone https://github.com/BlyNTC/Futebol-Club.git
 
 # Access
 $ cd futebol-club
